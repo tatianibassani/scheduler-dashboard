@@ -1,8 +1,8 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 
 import classnames from "classnames";
 
-import Loading from "./Loading";
+//import Loading from "./Loading";
 
 import Panel from "./Panel";
 
@@ -31,30 +31,34 @@ const data = [
   }
 ];
 
+class Dashboard extends Component {
+  
+  state = {
+    loading: false,
+    focused: null
+  };
 
-export default function Dashboard(props) {
-  const [state, setState] = React.useState({focused: null});
+  selectPanel = id => {
+    this.setState(previousState => ({
+      focused: previousState.focused !== null ? null : id
+    }));
+  };
 
-  function selectPanel(id) {
-    setState({
-      focused: id
+  render() {
+    const dashboardClasses = classnames("dashboard", {
+      "dashboard--focused": this.state.focused
     });
-  }
 
-  const dashboardClasses = classnames("dashboard", {
-    "dashboard--focused": state.focused
-    });
-
-  const panels = (state.focused ? data.filter(panel => state.focused === panel.id) : data).map(panel => (<Panel key={panel.id}
-                                   id={panel.id}
-                                   label={panel.label}
-                                   value={panel.value}
-                                   onSelect={selectPanel}
-                                  />
+    const panels = (this.state.focused ? data.filter(panel => this.state.
+      focused === panel.id) : data).map(panel => (<Panel
+                                                        key={panel.id}
+                                                        label={panel.label}
+                                                        value={panel.value}
+                                                        onSelect={event => this.selectPanel(panel.id)}/>
     ));
 
-  return (
-  <main className={dashboardClasses}>{panels}</main>	
-  );
+    return <main className={dashboardClasses}>{panels}</main>	 
+  }
 }
 
+export default Dashboard;
